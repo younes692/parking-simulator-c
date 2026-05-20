@@ -11,6 +11,7 @@ void* voiture_thread(void* arg) {
     int duree;
 
     printf("Voiture %d arrive au parking\n", voiture_id);
+    printf("test %d\n", voiture_id);
 
     // la voiture se gare et reste un moment
     duree = rand() % 3 + 1;
