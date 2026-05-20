@@ -4,9 +4,9 @@ LDFLAGS = -lncurses
 
 all: parking
 
-parking: src/main.c src/parking.c src/voiture.c src/logger.c src/stats.c src/affichage.c
-	$(CC) $(CFLAGS) -o parking src/main.c src/parking.c src/voiture.c \
-		src/logger.c src/stats.c src/affichage.c $(LDFLAGS)
+# pour linstant on compile juste ce qui existe
+parking: src/main.c src/voiture.c
+	$(CC) $(CFLAGS) -o parking src/main.c src/voiture.c $(LDFLAGS)
 
 clean:
 	rm -f parking logs/*.log logs/*.csv
