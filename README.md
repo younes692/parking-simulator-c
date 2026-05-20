@@ -1,1 +1,0 @@
-# Parking Simulator (C)
