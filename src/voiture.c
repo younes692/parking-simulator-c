@@ -6,6 +6,7 @@ void* voiture_thread(void* arg) {
     int duree_parking;
 
     printf("[voiture %02d] arrive au parking\n", voiture_id);
+    printf("test %d\n", voiture_id);
 
     // la voiture occupe une place un moment
     duree_parking = rand() % DUREE_MAX + 1;
