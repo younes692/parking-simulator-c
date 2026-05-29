@@ -4,6 +4,7 @@
 
 // variables globales definies dans parking.c
 extern int places[NB_PLACES];
+extern int nb_en_attente;
 
 void* voiture_thread(void* arg) {
     int voiture_id = *((int*)arg);
@@ -21,7 +22,9 @@ void* voiture_thread(void* arg) {
 
     // on attend qu'une place se libere
     ecrire_log(voiture_id, "ATTENTE", "");
+    nb_en_attente++;
     sem_wait(&places_dispo);
+    nb_en_attente--;
 
     // on cherche la premiere place libre et on la prend
     pthread_mutex_lock(&mutex_affichage);

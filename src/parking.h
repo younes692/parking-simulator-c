@@ -19,6 +19,9 @@ extern sem_t places_dispo;
 // mutex pour pas que les printf se melangent
 extern pthread_mutex_t mutex_affichage;
 
+// compte les voitures qui attendent une place
+extern int nb_en_attente;
+
 void init_parking();
 void destroy_parking();
 

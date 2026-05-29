@@ -7,6 +7,9 @@ pthread_mutex_t mutex_affichage;
 // tableau pour savoir quelles places sont libres (0=libre 1=occupee)
 int places[NB_PLACES];
 
+// nombre de voitures qui attendent en ce moment
+int nb_en_attente = 0;
+
 void init_parking() {
     int i;
     // on initialise le semaphore avec le nombre de places
