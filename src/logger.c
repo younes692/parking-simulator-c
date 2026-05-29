@@ -10,8 +10,8 @@ void ecrire_log(int id, char* evenement, char* details) {
     // on formate la date lisiblement
     strftime(timestamp, sizeof(timestamp), "%Y-%m-%d %H:%M:%S", localtime(&maintenant));
 
-    // on ouvre en mode "w" a chaque fois
-    f = fopen("logs/parking.log", "w");
+    // mode append sinon le fichier est ecrase a chaque run
+    f = fopen("logs/parking.log", "a");
     if (f == NULL) {
         perror("fopen log");
         return;
