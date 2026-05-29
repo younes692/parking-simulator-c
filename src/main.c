@@ -10,6 +10,9 @@ int main(int argc, char* argv[]) {
     int ids[NB_VOITURES];
     int i;
 
+    // on initialise le parking avant de creer les threads
+    init_parking();
+
     printf("debut simulation parking\n");
 
     // on cree les threads voitures
@@ -24,5 +27,7 @@ int main(int argc, char* argv[]) {
     }
 
     printf("simulation terminee\n");
+
+    destroy_parking();
     return 0;
 }

@@ -8,11 +8,18 @@
 #include <unistd.h>
 #include <time.h>
 
-// nombre de places dans le parking
 #define NB_PLACES 5
-// nombre de voitures qui vont essayer d'entrer
 #define NB_VOITURES 10
-// duree max qu'une voiture reste garee (secondes)
 #define DUREE_MAX 3
+
+// le semaphore compte les places disponibles
+// quand il est a 0 les voitures attendent
+extern sem_t places_dispo;
+
+// mutex pour pas que les printf se melangent
+extern pthread_mutex_t mutex_affichage;
+
+void init_parking();
+void destroy_parking();
 
 #endif
