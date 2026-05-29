@@ -1,9 +1,13 @@
 #include "voiture.h"
 #include "parking.h"
 #include "logger.h"
+#include "stats.h"
+#include <time.h>
 
-// variables globales definies dans parking.c
 extern int places[NB_PLACES];
+extern int nb_en_attente;
+extern int nb_places_occupees;
+extern int strategie;
 
 void* voiture_thread(void* arg) {
     int voiture_id = *((int*)arg);
@@ -11,17 +15,40 @@ void* voiture_thread(void* arg) {
     int ma_place = -1;
     int i;
     char details[64];
+    struct timespec debut, fin;
+    double temps_attente;
 
-    pthread_mutex_lock(&mutex_affichage);
-    printf("[voiture %02d] arrive au parking\n", voiture_id);
     printf("test %d\n", voiture_id);
-    pthread_mutex_unlock(&mutex_affichage);
 
     ecrire_log(voiture_id, "ARRIVEE", "");
 
-    // on attend qu'une place se libere
-    ecrire_log(voiture_id, "ATTENTE", "");
-    sem_wait(&places_dispo);
+    // on mesure combien de temps la voiture attend
+    clock_gettime(CLOCK_MONOTONIC, &debut);
+    nb_en_attente++;
+
+    if (strategie == 0) {
+        // mode semaphore : le thread est mis en veille par l OS
+        // il ne consomme pas de CPU pendant l attente
+        ecrire_log(voiture_id, "ATTENTE", "sem");
+        sem_wait(&places_dispo);
+    } else {
+        // mode attente active : on tourne en boucle
+        // ca marche mais ca consomme du CPU pour rien
+        ecrire_log(voiture_id, "ATTENTE", "busy");
+        while (nb_places_occupees >= NB_PLACES) {
+            sleep(1);
+        }
+        // on prend quand meme le semaphore pour pas le desynchroniser
+        sem_wait(&places_dispo);
+    }
+
+    nb_en_attente--;
+
+    // calcul du temps d attente
+    clock_gettime(CLOCK_MONOTONIC, &fin);
+    temps_attente = (fin.tv_sec - debut.tv_sec)
+                  + (fin.tv_nsec - debut.tv_nsec) / 1e9;
+    enregistrer_attente(strategie, temps_attente);
 
     // on cherche la premiere place libre et on la prend
     pthread_mutex_lock(&mutex_affichage);
@@ -29,10 +56,10 @@ void* voiture_thread(void* arg) {
         if (places[i] == 0) {
             places[i] = 1;
             ma_place = i;
+            nb_places_occupees++;
             break;
         }
     }
-    printf("[voiture %02d] se gare a la place %d\n", voiture_id, ma_place);
     pthread_mutex_unlock(&mutex_affichage);
 
     sprintf(details, "place %d", ma_place);
@@ -42,10 +69,10 @@ void* voiture_thread(void* arg) {
     duree_parking = rand() % DUREE_MAX + 1;
     sleep(duree_parking);
 
-    // la voiture part et libere sa place
+    // la voiture repart et libere sa place
     pthread_mutex_lock(&mutex_affichage);
     places[ma_place] = 0;
-    printf("[voiture %02d] quitte la place %d (etait la %d sec)\n", voiture_id, ma_place, duree_parking);
+    nb_places_occupees--;
     pthread_mutex_unlock(&mutex_affichage);
 
     ecrire_log(voiture_id, "DEPART", "");

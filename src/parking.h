@@ -8,16 +8,24 @@
 #include <unistd.h>
 #include <time.h>
 
-#define NB_PLACES 5
+#define NB_PLACES   5
 #define NB_VOITURES 10
-#define DUREE_MAX 3
+#define DUREE_MAX   3
 
-// le semaphore compte les places disponibles
-// quand il est a 0 les voitures attendent
+// semaphore : compte les places disponibles
 extern sem_t places_dispo;
 
-// mutex pour pas que les printf se melangent
+// mutex pour proteger places[] et les affichages
 extern pthread_mutex_t mutex_affichage;
+
+// voitures qui attendent dehors
+extern int nb_en_attente;
+
+// places actuellement occupees
+extern int nb_places_occupees;
+
+// strategie active : 0 = semaphore, 1 = attente active
+extern int strategie;
 
 void init_parking();
 void destroy_parking();
