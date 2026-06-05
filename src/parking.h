@@ -10,7 +10,7 @@
 
 #define NB_PLACES   5
 #define NB_VOITURES 10
-#define DUREE_MAX   3
+#define DUREE_MAX   6
 
 // semaphore : compte les places disponibles
 extern sem_t places_dispo;

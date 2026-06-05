@@ -20,6 +20,9 @@ void* voiture_thread(void* arg) {
 
     printf("test %d\n", voiture_id);
 
+    // les voitures arrivent pas toutes en meme temps
+    sleep(rand() % 4 + 1);
+
     ecrire_log(voiture_id, "ARRIVEE", "");
 
     // on mesure combien de temps la voiture attend
