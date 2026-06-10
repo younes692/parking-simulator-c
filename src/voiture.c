@@ -18,8 +18,6 @@ void* voiture_thread(void* arg) {
     struct timespec debut, fin;
     double temps_attente;
 
-    printf("test %d\n", voiture_id);
-
     // les voitures arrivent pas toutes en meme temps
     sleep(rand() % 4 + 1);
 
