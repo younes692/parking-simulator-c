@@ -67,7 +67,7 @@ void* voiture_thread(void* arg) {
     ecrire_log(voiture_id, "GAREE", details);
 
     // la voiture reste garee un moment
-    duree_parking = rand() % DUREE_MAX + 1;
+    duree_parking = rand() % 5 + 10;
     sleep(duree_parking);
 
     // la voiture repart et libere sa place
