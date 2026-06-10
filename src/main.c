@@ -47,6 +47,14 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
+    // 3eme argument optionnel : strategie de depart (0=sem, 1=busy)
+    if (argc >= 4) {
+        strategie = atoi(argv[3]);
+        if (strategie != 0 && strategie != 1) {
+            printf("strategie invalide : 0=semaphore 1=attente active\n");
+            return 1;
+        }
+    }
 
     init_parking();
     init_stats();
