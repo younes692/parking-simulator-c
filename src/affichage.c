@@ -60,7 +60,7 @@ void afficher_parking() {
     // --- PANNEAU GAUCHE ---
     mvprintw(2, 1, "PLACES :");
 
-    for (i = 0; i < NB_PLACES; i++) {
+    for (i = 0; i < nb_places; i++) {
         row = 4 + (i / 5) * 3;
         col = 1 + (i % 5) * 7;
 
@@ -86,7 +86,7 @@ void afficher_parking() {
     }
 
     // barre d occupation
-    pct = (NB_PLACES > 0) ? (nb_places_occupees * 100 / NB_PLACES) : 0;
+    pct = (nb_places > 0) ? (nb_places_occupees * 100 / nb_places) : 0;
     bar = pct / 10;
     mvprintw(13, 1, "Occupation : [");
     for (i = 0; i < 10; i++) {

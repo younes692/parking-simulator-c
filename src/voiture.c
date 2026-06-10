@@ -36,7 +36,7 @@ void* voiture_thread(void* arg) {
         // mode attente active : on tourne en boucle
         // ca marche mais ca consomme du CPU pour rien
         ecrire_log(voiture_id, "ATTENTE", "busy");
-        while (nb_places_occupees >= NB_PLACES) {
+        while (nb_places_occupees >= nb_places) {
             sleep(1);
         }
         // on prend quand meme le semaphore pour pas le desynchroniser
@@ -53,7 +53,7 @@ void* voiture_thread(void* arg) {
 
     // on cherche la premiere place libre et on la prend
     pthread_mutex_lock(&mutex_affichage);
-    for (i = 0; i < NB_PLACES; i++) {
+    for (i = 0; i < nb_places; i++) {
         if (places[i] == 0) {
             places[i] = 1;
             ma_place = i;

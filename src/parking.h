@@ -12,6 +12,10 @@
 #define NB_VOITURES 10
 #define DUREE_MAX   6
 
+// valeurs utilisees a l execution (modifiables via argv)
+extern int nb_places;
+extern int nb_voitures;
+
 // semaphore : compte les places disponibles
 extern sem_t places_dispo;
 

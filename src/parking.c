@@ -9,11 +9,15 @@ int nb_places_occupees = 0;
 // 0 = semaphore (defaut), 1 = attente active
 int strategie        = 0;
 
+// valeurs runtime (peuvent etre changees par argv)
+int nb_places   = NB_PLACES;
+int nb_voitures = NB_VOITURES;
+
 void init_parking() {
     int i;
-    sem_init(&places_dispo, 0, NB_PLACES);
+    sem_init(&places_dispo, 0, nb_places);
     pthread_mutex_init(&mutex_affichage, NULL);
-    for (i = 0; i < NB_PLACES; i++)
+    for (i = 0; i < nb_places; i++)
         places[i] = 0;
 }
 

@@ -33,6 +33,21 @@ int main(int argc, char* argv[]) {
     int ids[NB_VOITURES];
     int i;
 
+    // lecture des arguments si fournis
+    if (argc >= 3) {
+        nb_places   = atoi(argv[1]);
+        nb_voitures = atoi(argv[2]);
+        // securite basique
+        if (nb_places < 1 || nb_places > NB_PLACES) {
+            printf("nb_places invalide, max %d\n", NB_PLACES);
+            return 1;
+        }
+        if (nb_voitures < 1 || nb_voitures > NB_VOITURES) {
+            printf("nb_voitures invalide, max %d\n", NB_VOITURES);
+            return 1;
+        }
+    }
+
     init_parking();
     init_stats();
     init_affichage();
@@ -40,13 +55,13 @@ int main(int argc, char* argv[]) {
     pthread_create(&t_affichage, NULL, thread_affichage, NULL);
 
     // on cree les threads voitures
-    for (i = 0; i < NB_VOITURES; i++) {
+    for (i = 0; i < nb_voitures; i++) {
         ids[i] = i + 1;
         pthread_create(&threads[i], NULL, voiture_thread, &ids[i]);
     }
 
     // on attend que tout le monde ait fini
-    for (i = 0; i < NB_VOITURES; i++) {
+    for (i = 0; i < nb_voitures; i++) {
         pthread_join(threads[i], NULL);
     }
 
