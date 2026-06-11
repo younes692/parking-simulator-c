@@ -8,8 +8,6 @@ extern int nb_attente_sem;
 extern double temps_total_sem;
 extern int nb_attente_busy;
 extern double temps_total_busy;
-extern int nb_attente_cond;
-extern double temps_total_cond;
 extern int nb_entree_directe;
 extern int nb_entree_attente;
 extern pthread_mutex_t mutex_stats;

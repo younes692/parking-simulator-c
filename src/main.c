@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
     init_stats();
     init_affichage();
 
-    // menu de selection : retourne 0, 1 ou 2
+    // menu de selection : retourne 0 ou 1
     strategie = afficher_menu();
 
     pthread_create(&t_affichage, NULL, thread_affichage, NULL);

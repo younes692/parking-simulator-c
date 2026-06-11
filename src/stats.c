@@ -11,9 +11,6 @@ int nb_attente_sem   = 0;
 double temps_total_sem  = 0.0;
 int nb_attente_busy  = 0;
 double temps_total_busy = 0.0;
-int nb_attente_cond  = 0;
-double temps_total_cond = 0.0;
-
 // entree directe (< 0.1 sec) vs entree apres attente
 int nb_entree_directe = 0;
 int nb_entree_attente = 0;
@@ -33,9 +30,6 @@ void enregistrer_attente(int strat, double temps) {
     } else if (strat == 1) {
         nb_attente_busy++;
         temps_total_busy += temps;
-    } else {
-        nb_attente_cond++;
-        temps_total_cond += temps;
     }
     if (temps > 1.0)
         nb_entree_attente++;
@@ -69,10 +63,6 @@ void afficher_stats() {
         nom   = "ATTENTE ACTIVE";
         nb    = nb_attente_busy;
         total = temps_total_busy;
-    } else {
-        nom   = "VARIABLE CONDITION";
-        nb    = nb_attente_cond;
-        total = temps_total_cond;
     }
 
     moy = (nb > 0) ? total / nb : 0.0;
@@ -113,10 +103,6 @@ void exporter_csv() {
         nom   = "attente_active";
         nb    = nb_attente_busy;
         total = temps_total_busy;
-    } else {
-        nom   = "variable_condition";
-        nb    = nb_attente_cond;
-        total = temps_total_cond;
     }
 
     f = fopen("logs/stats.csv", "a");

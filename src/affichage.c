@@ -46,15 +46,13 @@ int afficher_menu() {
     int sel = 0;
     int ch;
     int i;
-    const char* noms[3] = {
+    const char* noms[2] = {
         "Semaphore          ",
-        "Attente active     ",
-        "Variable condition "
+        "Attente active     "
     };
-    const char* desc[3] = {
+    const char* desc[2] = {
         "thread dort, reveille par sem_post",
-        "boucle while, verifie sous mutex",
-        "pthread_cond_wait, reveille par signal"
+        "boucle while, verifie sous mutex"
     };
 
     keypad(stdscr, TRUE);
@@ -69,7 +67,7 @@ int afficher_menu() {
 
         mvprintw(2, 2, "Choisissez une strategie de synchronisation :");
 
-        for (i = 0; i < 3; i++) {
+        for (i = 0; i < 2; i++) {
             if (i == sel) {
                 mvprintw(4 + i, 2, ">");
                 attron(COLOR_PAIR(1) | A_BOLD);
@@ -89,7 +87,7 @@ int afficher_menu() {
         ch = getch();
         if (ch == KEY_UP && sel > 0)
             sel--;
-        else if (ch == KEY_DOWN && sel < 2)
+        else if (ch == KEY_DOWN && sel < 1)
             sel++;
         else if (ch == '\n' || ch == '\r' || ch == KEY_ENTER)
             break;
@@ -158,14 +156,10 @@ void afficher_parking() {
         attron(COLOR_PAIR(1));
         mvprintw(15, 14, "SEMAPHORE        ");
         attroff(COLOR_PAIR(1));
-    } else if (strategie == 1) {
+    } else {
         attron(COLOR_PAIR(2));
         mvprintw(15, 14, "ATTENTE ACTIVE   ");
         attroff(COLOR_PAIR(2));
-    } else {
-        attron(COLOR_PAIR(3));
-        mvprintw(15, 14, "VAR. CONDITION   ");
-        attroff(COLOR_PAIR(3));
     }
 
     mvprintw(18, 1, "[q] quitter");
