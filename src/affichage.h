@@ -8,6 +8,7 @@
 #include <string.h>
 
 void init_affichage();
+int  afficher_menu();
 void afficher_parking();
 void end_affichage();
 // appelee par logger pour ajouter une ligne au panneau journal

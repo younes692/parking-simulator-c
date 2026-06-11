@@ -49,24 +49,13 @@ int main(int argc, char* argv[]) {
 
     init_stats();
     init_affichage();
+
+    // menu de selection : retourne 0, 1 ou 2
+    strategie = afficher_menu();
+
     pthread_create(&t_affichage, NULL, thread_affichage, NULL);
 
-    // --- run 1 : attente active ---
-    strategie = 1;
-    init_parking();
-    for (i = 0; i < nb_voitures; i++) {
-        ids[i] = i + 1;
-        pthread_create(&threads[i], NULL, voiture_thread, &ids[i]);
-    }
-    for (i = 0; i < nb_voitures; i++) {
-        pthread_join(threads[i], NULL);
-    }
-    destroy_parking();
-
-    sleep(1);
-
-    // --- run 2 : semaphore ---
-    strategie = 0;
+    // run unique avec la strategie choisie
     init_parking();
     for (i = 0; i < nb_voitures; i++) {
         ids[i] = i + 1;
@@ -81,8 +70,6 @@ int main(int argc, char* argv[]) {
     pthread_join(t_affichage, NULL);
 
     end_affichage();
-
-    // afficher et exporter les stats
     afficher_stats();
     exporter_csv();
 

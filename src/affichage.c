@@ -42,6 +42,63 @@ void init_affichage() {
         log_lignes[i][0] = '\0';
 }
 
+int afficher_menu() {
+    int sel = 0;
+    int ch;
+    int i;
+    const char* noms[3] = {
+        "Semaphore          ",
+        "Attente active     ",
+        "Variable condition "
+    };
+    const char* desc[3] = {
+        "thread dort, reveille par sem_post",
+        "boucle while, verifie sous mutex",
+        "pthread_cond_wait, reveille par signal"
+    };
+
+    keypad(stdscr, TRUE);
+    nodelay(stdscr, FALSE);
+
+    while (1) {
+        clear();
+
+        attron(COLOR_PAIR(3) | A_BOLD);
+        mvprintw(0, 1, " SIMULATEUR DE PARKING ");
+        attroff(COLOR_PAIR(3) | A_BOLD);
+
+        mvprintw(2, 2, "Choisissez une strategie de synchronisation :");
+
+        for (i = 0; i < 3; i++) {
+            if (i == sel) {
+                mvprintw(4 + i, 2, ">");
+                attron(COLOR_PAIR(1) | A_BOLD);
+                mvprintw(4 + i, 4, "[ %s]", noms[i]);
+                attroff(COLOR_PAIR(1) | A_BOLD);
+            } else {
+                mvprintw(4 + i, 2, " ");
+                mvprintw(4 + i, 4, "[ %s]", noms[i]);
+            }
+            mvprintw(4 + i, 28, "  %s", desc[i]);
+        }
+
+        mvprintw(9, 2, "Fleche haut/bas pour naviguer   ENTREE pour confirmer");
+
+        refresh();
+
+        ch = getch();
+        if (ch == KEY_UP && sel > 0)
+            sel--;
+        else if (ch == KEY_DOWN && sel < 2)
+            sel++;
+        else if (ch == '\n' || ch == '\r' || ch == KEY_ENTER)
+            break;
+    }
+
+    nodelay(stdscr, TRUE);
+    return sel;
+}
+
 void afficher_parking() {
     int i, row, col, pct, bar;
     int col_d = 42; // colonne de depart panneau droit
@@ -101,10 +158,14 @@ void afficher_parking() {
         attron(COLOR_PAIR(1));
         mvprintw(15, 14, "SEMAPHORE        ");
         attroff(COLOR_PAIR(1));
-    } else {
+    } else if (strategie == 1) {
         attron(COLOR_PAIR(2));
         mvprintw(15, 14, "ATTENTE ACTIVE   ");
         attroff(COLOR_PAIR(2));
+    } else {
+        attron(COLOR_PAIR(3));
+        mvprintw(15, 14, "VAR. CONDITION   ");
+        attroff(COLOR_PAIR(3));
     }
 
     mvprintw(18, 1, "[q] quitter");

@@ -25,13 +25,16 @@ extern pthread_mutex_t mutex_affichage;
 // mutex pour proteger nb_en_attente et la lecture de strategie
 extern pthread_mutex_t mutex_compteurs;
 
+// variable de condition pour la strategie 2
+extern pthread_cond_t cond_place_dispo;
+
 // voitures qui attendent dehors
 extern int nb_en_attente;
 
 // places actuellement occupees
 extern int nb_places_occupees;
 
-// strategie active : 0 = semaphore, 1 = attente active
+// strategie active : 0 = semaphore, 1 = attente active, 2 = variable condition
 extern int strategie;
 
 void init_parking();

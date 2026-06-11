@@ -64,7 +64,7 @@ void* voiture_thread(void* arg) {
         }
         pthread_mutex_unlock(&mutex_affichage);
 
-    } else {
+    } else if (strat_local == 1) {
         ecrire_log(voiture_id, "ATTENTE", "busy");
 
         /* si aucune place ne se libere apres 60 sec (20 x 3s), le thread
@@ -103,6 +103,31 @@ void* voiture_thread(void* arg) {
         temps_attente = (fin.tv_sec - debut.tv_sec)
                       + (fin.tv_nsec - debut.tv_nsec) / 1e9;
         enregistrer_attente(strat_local, temps_attente);
+
+    } else {
+        ecrire_log(voiture_id, "ATTENTE", "cond");
+
+        pthread_mutex_lock(&mutex_affichage);
+        while (nb_places_occupees >= nb_places)
+            pthread_cond_wait(&cond_place_dispo, &mutex_affichage);
+        for (i = 0; i < nb_places; i++) {
+            if (places[i] == 0) {
+                places[i] = 1;
+                ma_place = i;
+                nb_places_occupees++;
+                break;
+            }
+        }
+        pthread_mutex_unlock(&mutex_affichage);
+
+        pthread_mutex_lock(&mutex_compteurs);
+        nb_en_attente--;
+        pthread_mutex_unlock(&mutex_compteurs);
+
+        clock_gettime(CLOCK_MONOTONIC, &fin);
+        temps_attente = (fin.tv_sec - debut.tv_sec)
+                      + (fin.tv_nsec - debut.tv_nsec) / 1e9;
+        enregistrer_attente(strat_local, temps_attente);
     }
 
     sprintf(details, "place %d", ma_place);
@@ -114,6 +139,8 @@ void* voiture_thread(void* arg) {
     pthread_mutex_lock(&mutex_affichage);
     places[ma_place] = 0;
     nb_places_occupees--;
+    if (strat_local == 2)
+        pthread_cond_signal(&cond_place_dispo);
     pthread_mutex_unlock(&mutex_affichage);
 
     ecrire_log(voiture_id, "DEPART", "");
