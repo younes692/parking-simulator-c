@@ -35,9 +35,6 @@ void afficher_stats() {
     printf("Voitures en att:   %-10d   %d\n",   nb_attente_sem, nb_attente_busy);
     printf("Temps moy att:     %-10.2f   %.2f sec\n", moy_sem, moy_busy);
     printf("============================================\n");
-    printf("Le semaphore est plus efficace : le thread\n");
-    printf("dort et ne consomme pas de CPU.\n");
-    printf("L'attente active tourne en boucle : CPU gaspille.\n");
 }
 
 void exporter_csv() {
