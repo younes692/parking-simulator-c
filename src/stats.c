@@ -37,7 +37,7 @@ void enregistrer_attente(int strat, double temps) {
         nb_attente_cond++;
         temps_total_cond += temps;
     }
-    if (temps > 0.1)
+    if (temps > 1.0)
         nb_entree_attente++;
     else
         nb_entree_directe++;

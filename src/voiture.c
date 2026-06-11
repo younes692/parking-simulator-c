@@ -80,6 +80,7 @@ void* voiture_thread(void* arg) {
                     places[i] = 1;
                     ma_place = i;
                     nb_places_occupees++;
+                    clock_gettime(CLOCK_MONOTONIC, &fin);
                     usleep(150000);
                     clock_gettime(CLOCK_MONOTONIC, &t_garee);
                     break;
@@ -104,7 +105,6 @@ void* voiture_thread(void* arg) {
         nb_en_attente--;
         pthread_mutex_unlock(&mutex_compteurs);
 
-        clock_gettime(CLOCK_MONOTONIC, &fin);
         temps_attente = (fin.tv_sec - debut.tv_sec)
                       + (fin.tv_nsec - debut.tv_nsec) / 1e9;
         enregistrer_attente(strat_local, temps_attente);
@@ -120,6 +120,7 @@ void* voiture_thread(void* arg) {
                 places[i] = 1;
                 ma_place = i;
                 nb_places_occupees++;
+                clock_gettime(CLOCK_MONOTONIC, &fin);
                 usleep(150000);
                 clock_gettime(CLOCK_MONOTONIC, &t_garee);
                 break;
@@ -131,7 +132,6 @@ void* voiture_thread(void* arg) {
         nb_en_attente--;
         pthread_mutex_unlock(&mutex_compteurs);
 
-        clock_gettime(CLOCK_MONOTONIC, &fin);
         temps_attente = (fin.tv_sec - debut.tv_sec)
                       + (fin.tv_nsec - debut.tv_nsec) / 1e9;
         enregistrer_attente(strat_local, temps_attente);
