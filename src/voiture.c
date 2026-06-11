@@ -18,8 +18,9 @@ void* voiture_thread(void* arg) {
     int strat_local;
     int tentatives;
     char details[64];
-    struct timespec debut, fin, ts_timeout;
+    struct timespec debut, fin, ts_timeout, t_garee, t_depart;
     double temps_attente;
+    double duree_garee;
 
     ecrire_log(voiture_id, "ARRIVEE", "");
     clock_gettime(CLOCK_MONOTONIC, &debut);
@@ -59,6 +60,8 @@ void* voiture_thread(void* arg) {
                 places[i] = 1;
                 ma_place = i;
                 nb_places_occupees++;
+                usleep(150000);
+                clock_gettime(CLOCK_MONOTONIC, &t_garee);
                 break;
             }
         }
@@ -77,6 +80,8 @@ void* voiture_thread(void* arg) {
                     places[i] = 1;
                     ma_place = i;
                     nb_places_occupees++;
+                    usleep(150000);
+                    clock_gettime(CLOCK_MONOTONIC, &t_garee);
                     break;
                 }
             }
@@ -115,6 +120,8 @@ void* voiture_thread(void* arg) {
                 places[i] = 1;
                 ma_place = i;
                 nb_places_occupees++;
+                usleep(150000);
+                clock_gettime(CLOCK_MONOTONIC, &t_garee);
                 break;
             }
         }
@@ -137,6 +144,12 @@ void* voiture_thread(void* arg) {
     sleep(duree_parking);
 
     pthread_mutex_lock(&mutex_affichage);
+    clock_gettime(CLOCK_MONOTONIC, &t_depart);
+    duree_garee = (t_depart.tv_sec - t_garee.tv_sec)
+                + (t_depart.tv_nsec - t_garee.tv_nsec) / 1e9;
+    pthread_mutex_lock(&mutex_stats_temps);
+    temps_occupe_total += duree_garee;
+    pthread_mutex_unlock(&mutex_stats_temps);
     places[ma_place] = 0;
     nb_places_occupees--;
     if (strat_local == 2)

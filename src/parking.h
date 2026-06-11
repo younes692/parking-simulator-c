@@ -28,6 +28,9 @@ extern pthread_mutex_t mutex_compteurs;
 // variable de condition pour la strategie 2
 extern pthread_cond_t cond_place_dispo;
 
+// mutex pour proteger temps_occupe_total
+extern pthread_mutex_t mutex_stats_temps;
+
 // voitures qui attendent dehors
 extern int nb_en_attente;
 
@@ -36,6 +39,10 @@ extern int nb_places_occupees;
 
 // strategie active : 0 = semaphore, 1 = attente active, 2 = variable condition
 extern int strategie;
+
+// pour le calcul du taux d utilisation
+extern struct timespec simulation_debut;
+extern double temps_occupe_total;
 
 void init_parking();
 void destroy_parking();
