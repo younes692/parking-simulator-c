@@ -43,7 +43,7 @@ void* voiture_thread(void* arg) {
         // ca marche mais ca consomme du CPU pour rien
         ecrire_log(voiture_id, "ATTENTE", "busy");
         while (nb_places_occupees >= nb_places) {
-            sleep(1);
+            sleep(3);
         }
         // on prend quand meme le semaphore pour pas le desynchroniser
         sem_wait(&places_dispo);
@@ -75,7 +75,7 @@ void* voiture_thread(void* arg) {
     ecrire_log(voiture_id, "GAREE", details);
 
     // la voiture reste garee un moment
-    duree_parking = rand() % 5 + 10;
+    duree_parking = 5;
     sleep(duree_parking);
 
     // la voiture repart et libere sa place
