@@ -14,6 +14,7 @@ void* voiture_thread(void* arg) {
     int duree_parking;
     int ma_place = -1;
     int i;
+    int strat_local;
     char details[64];
     struct timespec debut, fin;
     double temps_attente;
@@ -25,9 +26,14 @@ void* voiture_thread(void* arg) {
 
     // on mesure combien de temps la voiture attend
     clock_gettime(CLOCK_MONOTONIC, &debut);
-    nb_en_attente++;
 
-    if (strategie == 0) {
+    // lit la strategie et incremente nb_en_attente sous le meme verrou
+    pthread_mutex_lock(&mutex_compteurs);
+    strat_local = strategie;
+    nb_en_attente++;
+    pthread_mutex_unlock(&mutex_compteurs);
+
+    if (strat_local == 0) {
         // mode semaphore : le thread est mis en veille par l OS
         // il ne consomme pas de CPU pendant l attente
         ecrire_log(voiture_id, "ATTENTE", "sem");
@@ -43,13 +49,15 @@ void* voiture_thread(void* arg) {
         sem_wait(&places_dispo);
     }
 
+    pthread_mutex_lock(&mutex_compteurs);
     nb_en_attente--;
+    pthread_mutex_unlock(&mutex_compteurs);
 
     // calcul du temps d attente
     clock_gettime(CLOCK_MONOTONIC, &fin);
     temps_attente = (fin.tv_sec - debut.tv_sec)
                   + (fin.tv_nsec - debut.tv_nsec) / 1e9;
-    enregistrer_attente(strategie, temps_attente);
+    enregistrer_attente(strat_local, temps_attente);
 
     // on cherche la premiere place libre et on la prend
     pthread_mutex_lock(&mutex_affichage);

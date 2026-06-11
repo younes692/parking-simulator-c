@@ -2,6 +2,7 @@
 
 sem_t places_dispo;
 pthread_mutex_t mutex_affichage;
+pthread_mutex_t mutex_compteurs;
 
 int places[NB_PLACES];
 int nb_en_attente    = 0;
@@ -15,8 +16,11 @@ int nb_voitures = NB_VOITURES;
 
 void init_parking() {
     int i;
+    nb_places_occupees = 0;
+    nb_en_attente      = 0;
     sem_init(&places_dispo, 0, nb_places);
     pthread_mutex_init(&mutex_affichage, NULL);
+    pthread_mutex_init(&mutex_compteurs, NULL);
     for (i = 0; i < nb_places; i++)
         places[i] = 0;
 }
@@ -24,4 +28,5 @@ void init_parking() {
 void destroy_parking() {
     sem_destroy(&places_dispo);
     pthread_mutex_destroy(&mutex_affichage);
+    pthread_mutex_destroy(&mutex_compteurs);
 }

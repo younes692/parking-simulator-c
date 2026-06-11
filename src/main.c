@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
+#include <time.h>
 
 #include "parking.h"
 #include "voiture.h"
@@ -19,9 +20,6 @@ void* thread_affichage(void* arg) {
         ch = getch();
         if (ch == 'q') {
             simulation_active = 0;
-        } else if (ch == 's') {
-            // changer de strategie en cours de simulation
-            strategie = (strategie == 0) ? 1 : 0;
         }
     }
     return NULL;
@@ -33,11 +31,12 @@ int main(int argc, char* argv[]) {
     int ids[NB_VOITURES];
     int i;
 
+    srand((unsigned int)time(NULL));
+
     // lecture des arguments si fournis
     if (argc >= 3) {
         nb_places   = atoi(argv[1]);
         nb_voitures = atoi(argv[2]);
-        // securite basique
         if (nb_places < 1 || nb_places > NB_PLACES) {
             printf("nb_places invalide, max %d\n", NB_PLACES);
             return 1;
@@ -47,31 +46,36 @@ int main(int argc, char* argv[]) {
             return 1;
         }
     }
-    // 3eme argument optionnel : strategie de depart (0=sem, 1=busy)
-    if (argc >= 4) {
-        strategie = atoi(argv[3]);
-        if (strategie != 0 && strategie != 1) {
-            printf("strategie invalide : 0=semaphore 1=attente active\n");
-            return 1;
-        }
-    }
 
-    init_parking();
     init_stats();
     init_affichage();
-
     pthread_create(&t_affichage, NULL, thread_affichage, NULL);
 
-    // on cree les threads voitures
+    // --- run 1 : attente active ---
+    strategie = 1;
+    init_parking();
     for (i = 0; i < nb_voitures; i++) {
         ids[i] = i + 1;
         pthread_create(&threads[i], NULL, voiture_thread, &ids[i]);
     }
-
-    // on attend que tout le monde ait fini
     for (i = 0; i < nb_voitures; i++) {
         pthread_join(threads[i], NULL);
     }
+    destroy_parking();
+
+    sleep(1);
+
+    // --- run 2 : semaphore ---
+    strategie = 0;
+    init_parking();
+    for (i = 0; i < nb_voitures; i++) {
+        ids[i] = i + 1;
+        pthread_create(&threads[i], NULL, voiture_thread, &ids[i]);
+    }
+    for (i = 0; i < nb_voitures; i++) {
+        pthread_join(threads[i], NULL);
+    }
+    destroy_parking();
 
     simulation_active = 0;
     pthread_join(t_affichage, NULL);
@@ -82,6 +86,5 @@ int main(int argc, char* argv[]) {
     afficher_stats();
     exporter_csv();
 
-    destroy_parking();
     return 0;
 }

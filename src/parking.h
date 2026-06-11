@@ -22,6 +22,9 @@ extern sem_t places_dispo;
 // mutex pour proteger places[] et les affichages
 extern pthread_mutex_t mutex_affichage;
 
+// mutex pour proteger nb_en_attente et la lecture de strategie
+extern pthread_mutex_t mutex_compteurs;
+
 // voitures qui attendent dehors
 extern int nb_en_attente;
 
