@@ -1,7 +1,6 @@
 # Simulateur de Parking
 
-Projet universitaire — Systemes d'exploitation / Programmation concurrente
-Auteur : Younes MOUMOU
+Projet universitaire - Systemes d'exploitation / Programmation concurrente
 
 ## Description
 
