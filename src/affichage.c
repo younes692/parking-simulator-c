@@ -107,7 +107,7 @@ void afficher_parking() {
         attroff(COLOR_PAIR(2));
     }
 
-    mvprintw(18, 1, "[s] changer strategie    [q] quitter");
+    mvprintw(18, 1, "[q] quitter");
 
     // --- PANNEAU DROIT : journal ---
     mvprintw(2, col_d, "JOURNAL :");
