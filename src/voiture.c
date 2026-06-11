@@ -3,6 +3,7 @@
 #include "logger.h"
 #include "stats.h"
 #include <time.h>
+#include <errno.h>
 
 extern int places[NB_PLACES];
 extern int nb_en_attente;
@@ -15,8 +16,9 @@ void* voiture_thread(void* arg) {
     int ma_place = -1;
     int i;
     int strat_local;
+    int tentatives;
     char details[64];
-    struct timespec debut, fin;
+    struct timespec debut, fin, ts_timeout;
     double temps_attente;
 
     ecrire_log(voiture_id, "ARRIVEE", "");
@@ -29,7 +31,18 @@ void* voiture_thread(void* arg) {
 
     if (strat_local == 0) {
         ecrire_log(voiture_id, "ATTENTE", "sem");
-        sem_wait(&places_dispo);
+
+        /* si le semaphore n est jamais poste (interblocage), le thread
+         * sort proprement apres 30 sec au lieu de bloquer indefiniment */
+        clock_gettime(CLOCK_REALTIME, &ts_timeout);
+        ts_timeout.tv_sec += 30;
+        if (sem_timedwait(&places_dispo, &ts_timeout) != 0) {
+            pthread_mutex_lock(&mutex_compteurs);
+            nb_en_attente--;
+            pthread_mutex_unlock(&mutex_compteurs);
+            ecrire_log(voiture_id, "TIMEOUT", "");
+            return NULL;
+        }
 
         pthread_mutex_lock(&mutex_compteurs);
         nb_en_attente--;
@@ -54,6 +67,9 @@ void* voiture_thread(void* arg) {
     } else {
         ecrire_log(voiture_id, "ATTENTE", "busy");
 
+        /* si aucune place ne se libere apres 60 sec (20 x 3s), le thread
+         * sort proprement pour eviter une boucle infinie */
+        tentatives = 0;
         while (ma_place == -1) {
             pthread_mutex_lock(&mutex_affichage);
             for (i = 0; i < nb_places; i++) {
@@ -66,8 +82,17 @@ void* voiture_thread(void* arg) {
             }
             pthread_mutex_unlock(&mutex_affichage);
 
-            if (ma_place == -1)
+            if (ma_place == -1) {
+                tentatives++;
+                if (tentatives >= 20) {
+                    pthread_mutex_lock(&mutex_compteurs);
+                    nb_en_attente--;
+                    pthread_mutex_unlock(&mutex_compteurs);
+                    ecrire_log(voiture_id, "TIMEOUT", "");
+                    return NULL;
+                }
                 sleep(3);
+            }
         }
 
         pthread_mutex_lock(&mutex_compteurs);
