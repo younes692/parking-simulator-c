@@ -31,7 +31,7 @@ void* voiture_thread(void* arg) {
     pthread_mutex_unlock(&mutex_compteurs);
 
     if (strat_local == 0) {
-        ecrire_log(voiture_id, "ATTENTE", "sem");
+        ecrire_log(voiture_id, "EN FILE", "sem");
 
         /* si le semaphore n est jamais poste (interblocage), le thread
          * sort proprement apres 30 sec au lieu de bloquer indefiniment */
@@ -68,7 +68,7 @@ void* voiture_thread(void* arg) {
         pthread_mutex_unlock(&mutex_affichage);
 
     } else if (strat_local == 1) {
-        ecrire_log(voiture_id, "ATTENTE", "busy");
+        ecrire_log(voiture_id, "EN FILE", "busy");
 
         /* si aucune place ne se libere apres 60 sec (20 x 3s), le thread
          * sort proprement pour eviter une boucle infinie */
