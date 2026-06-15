@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <sys/stat.h>
 
 #include "parking.h"
 #include "voiture.h"
@@ -32,6 +33,7 @@ int main(int argc, char* argv[]) {
     int i;
 
     srand((unsigned int)time(NULL));
+    mkdir("logs", 0755);
 
     // lecture des arguments si fournis
     if (argc >= 3) {
